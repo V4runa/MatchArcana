@@ -1,5 +1,5 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from "react";
+import classNames from "classnames";
 
 type MatchCardProps = {
   id: number;
@@ -18,55 +18,58 @@ const MatchCard: React.FC<MatchCardProps> = ({
   isSelected,
   isMatched,
   isObstacle,
-  onClick
+  onClick,
 }) => {
   const flipCardStyles = {
-    perspective: '1000px',
-    width: '150px', // Adjusted width for better fit
-    height: '200px' // Adjusted height for better fit
+    perspective: "1000px",
+    width: "150px",
+    height: "200px",
   };
 
   const cardStyles = {
-    width: '100%',
-    height: '100%',
-    position: 'relative' as 'relative',
-    transformStyle: 'preserve-3d' as 'preserve-3d',
-    transition: 'transform 0.6s',
-    transform: isSelected || isMatched ? 'rotateY(180deg)' : 'rotateY(0)'
+    width: "100%",
+    height: "100%",
+    position: "relative" as "relative",
+    transformStyle: "preserve-3d" as "preserve-3d",
+    transition: "transform 0.6s",
+    transform: isSelected || isMatched ? "rotateY(180deg)" : "rotateY(0)",
   };
 
   const frontBackStyles = {
-    width: '100%',
-    height: '100%',
-    backfaceVisibility: 'hidden' as 'hidden',
-    position: 'absolute' as 'absolute',
-    top: '0',
-    left: '0'
+    width: "100%",
+    height: "100%",
+    backfaceVisibility: "hidden" as "hidden",
+    position: "absolute" as "absolute",
+    top: "0",
+    left: "0",
   };
 
   const backStyles = {
     ...frontBackStyles,
-    transform: 'rotateY(180deg)'
+    transform: "rotateY(180deg)",
   };
 
   return (
     <div
       className={classNames(
-        'relative border rounded shadow cursor-pointer transition-transform transform',
+        "relative border rounded shadow cursor-pointer transition-transform transform",
         {
-          'bg-green-200': isMatched,
-          'bg-blue-200': isSelected && !isMatched && !isObstacle,
-          'bg-red-200': isObstacle && isSelected,
-          'bg-white': !isSelected && !isMatched && !isObstacle,
-          'scale-105': isSelected || isMatched // Slightly enlarge when selected or matched
+          "bg-green-200": isMatched,
+          "bg-blue-200": isSelected && !isMatched && !isObstacle,
+          "bg-red-200": isObstacle && isSelected,
+          "bg-white": !isSelected && !isMatched && !isObstacle,
+          "scale-105": isSelected || isMatched,
         }
       )}
       onClick={() => onClick(id)}
-      style={{ width: '150px', height: '200px' }}
+      style={{ width: "150px", height: "200px" }}
     >
       <div style={flipCardStyles}>
         <div style={cardStyles}>
-          <div style={frontBackStyles} className="bg-gray-300 flex items-center justify-center rounded">
+          <div
+            style={frontBackStyles}
+            className="bg-gray-300 flex items-center justify-center rounded"
+          >
             {!isSelected && !isMatched && (
               <div className="text-lg font-bold">?</div>
             )}
@@ -77,7 +80,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
                 src={imgUrl}
                 alt={name}
                 className="w-full h-full object-cover rounded"
-                style={{ display: isSelected || isMatched ? 'block' : 'none' }}
+                style={{ display: isSelected || isMatched ? "block" : "none" }}
               />
             )}
           </div>

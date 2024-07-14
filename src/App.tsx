@@ -1,11 +1,10 @@
-import React from "react";
-import Grid from "./library/components/Grid";
-import './app.css'; // Import the CSS file
+import './app.css';
+import Game from "./library/components/Game";
 
 function App() {
   return (
     <div className="App">
-      <Grid />
+      <Game />
     </div>
   );
 }

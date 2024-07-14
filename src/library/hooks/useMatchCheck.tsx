@@ -1,27 +1,31 @@
 import { useState, useEffect } from "react";
-import cardData, { CardData } from "../data/CardData";
+import { generateCardData, CardData } from "../data/CardData";
 
 const useMatchCheck = () => {
-  const [data, setData] = useState<CardData[]>(cardData);
+  const [data, setData] = useState<CardData[]>(generateCardData());
   const [selectedCards, setSelectedCards] = useState<number[]>([]);
   const [lives, setLives] = useState<number>(3);
   const [gameOver, setGameOver] = useState<boolean>(false);
 
   const resetBoard = () => {
-    setData(cardData);
+    setData(generateCardData());
     setSelectedCards([]);
     setLives(3);
     setGameOver(false);
   };
 
   const handleCardClick = (id: number) => {
-    if (gameOver) return;
+    if (gameOver || selectedCards.length >= 2) return;
 
     const clickedCard = data.find((card) => card.id === id);
-
     if (!clickedCard) return;
 
-    // Handle obstacle cards
+    setData((prevData) =>
+      prevData.map((card) =>
+        card.id === id ? { ...card, isSelected: !card.isSelected } : card
+      )
+    );
+
     if (clickedCard.isObstacle) {
       setLives((prevLives) => {
         const newLives = prevLives - 1;
@@ -30,27 +34,22 @@ const useMatchCheck = () => {
         }
         return newLives;
       });
-      setData((prevData) =>
-        prevData.map((card) =>
-          card.id === id ? { ...card, isSelected: true } : card
-        )
-      );
-      return;
+      setTimeout(() => {
+        setData((prevData) =>
+          prevData.map((card) =>
+            card.id === id ? { ...card, isSelected: true } : card
+          )
+        );
+      }, 300);
+      setSelectedCards([]);
+    } else {
+      setSelectedCards((prevSelected) => {
+        if (prevSelected.includes(id)) {
+          return prevSelected.filter((cardId) => cardId !== id);
+        }
+        return [...prevSelected, id];
+      });
     }
-
-    // Handle normal cards
-    setData((prevData) =>
-      prevData.map((card) =>
-        card.id === id ? { ...card, isSelected: !card.isSelected } : card
-      )
-    );
-
-    setSelectedCards((prevSelected) => {
-      if (prevSelected.includes(id)) {
-        return prevSelected.filter((cardId) => cardId !== id);
-      }
-      return [...prevSelected, id];
-    });
   };
 
   useEffect(() => {
@@ -59,26 +58,27 @@ const useMatchCheck = () => {
       const firstCard = data.find((card) => card.id === firstId);
       const secondCard = data.find((card) => card.id === secondId);
 
-      if (firstCard && secondCard && firstCard.name === secondCard.name) {
-        setData((prevData) =>
-          prevData.map((card) =>
-            card.id === firstId || card.id === secondId
-              ? { ...card, isMatched: true, isSelected: false }
-              : card
-          )
-        );
-      } else {
-        setTimeout(() => {
+      if (firstCard && secondCard) {
+        if (firstCard.name === secondCard.name) {
           setData((prevData) =>
             prevData.map((card) =>
               card.id === firstId || card.id === secondId
-                ? { ...card, isSelected: false }
+                ? { ...card, isMatched: true, isSelected: false }
                 : card
             )
           );
-        }, 1000);
+        } else {
+          setTimeout(() => {
+            setData((prevData) =>
+              prevData.map((card) =>
+                card.id === firstId || card.id === secondId
+                  ? { ...card, isSelected: false }
+                  : card
+              )
+            );
+          }, 1000);
+        }
       }
-
       setSelectedCards([]);
     }
   }, [selectedCards, data]);
